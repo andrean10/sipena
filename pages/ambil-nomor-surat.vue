@@ -68,24 +68,25 @@
                         <p v-else class="mt-1.5 text-xs font-semibold text-danger">NIP harus berisi tepat 18 digit angka.</p>
                     </div>
 
-                    <sipena-searchable-combobox
-                        v-model="form.konseptor"
-                        label="Nama Konseptor"
-                        placeholder="Cari atau ketik nama konseptor"
-                        helper="Pilih pegawai dari daftar atau ketik nama manual."
-                        success="Konseptor terpilih."
-                        :items="pegawai"
-                        :search-keys="['nama', 'nip', 'jabatan', 'unit']"
-                        item-key="id"
-                        title-key="nama"
-                        subtitle-key="unit"
-                        allow-custom
-                    >
-                        <template #item="{ item }">
-                            <div class="font-semibold text-black dark:text-white-light">{{ item.nama }}</div>
-                            <div class="text-xs text-white-dark">{{ item.nip }} - {{ item.unit }}</div>
-                        </template>
-                    </sipena-searchable-combobox>
+                    <div>
+                        <label class="mb-1.5 block font-semibold text-black dark:text-white-light">Nama Konseptor</label>
+                        <div class="relative">
+                            <input
+                                type="text"
+                                class="form-input ps-10 disabled:cursor-not-allowed disabled:bg-white-light/60 disabled:text-white-dark dark:disabled:bg-[#1b2e4b]/60"
+                                :value="konseptorName"
+                                disabled
+                                placeholder="Nama konseptor akan tampil otomatis setelah NIP valid"
+                            />
+                            <span class="absolute start-4 top-1/2 -translate-y-1/2 text-white-dark">
+                                <icon-user class="h-4.5 w-4.5" />
+                            </span>
+                        </div>
+                        <p v-if="touchNip && isNipValid && !konseptorName" class="mt-1.5 text-xs font-semibold text-danger">
+                            NIP tidak ditemukan dalam data pegawai.
+                        </p>
+                        <p v-else class="mt-1.5 text-xs text-white-dark">Nama konseptor terisi otomatis berdasarkan NIP pengambil yang valid.</p>
+                    </div>
 
                     <div>
                         <label class="mb-1.5 block font-semibold text-black dark:text-white-light">Hal</label>
@@ -102,8 +103,8 @@
                     <sipena-searchable-combobox
                         v-model="form.klasifikasi"
                         label="Kode Klasifikasi Surat"
-                        placeholder="Cari kode, nama, atau deskripsi"
-                        helper="Deskripsi tersedia melalui tombol info pada item."
+                        placeholder="Cari kode atau nama klasifikasi"
+                        helper="Ketik kode atau nama untuk mencari klasifikasi."
                         success="Klasifikasi terpilih."
                         :items="klasifikasi"
                         :search-keys="['kode', 'nama', 'deskripsi']"
@@ -114,19 +115,9 @@
                             <icon-folder class="h-4.5 w-4.5" />
                         </template>
                         <template #item="{ item }">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <div class="font-extrabold text-primary">{{ item.kode }}</div>
-                                    <div class="text-sm font-semibold text-black dark:text-white-light">{{ item.nama }}</div>
-                                </div>
-                                <span class="group relative shrink-0">
-                                    <button type="button" class="grid h-8 w-8 place-content-center rounded-full text-info hover:bg-info-light" @click.stop>
-                                        <icon-info-circle :fill="true" class="h-5 w-5" />
-                                    </button>
-                                    <span class="pointer-events-none absolute right-0 top-9 hidden w-64 rounded-md bg-black p-3 text-xs leading-5 text-white shadow-lg group-hover:block">
-                                        {{ item.deskripsi }}
-                                    </span>
-                                </span>
+                            <div>
+                                <div class="font-extrabold text-primary">{{ item.kode }}</div>
+                                <div class="text-sm font-semibold text-black dark:text-white-light">{{ item.nama }}</div>
                             </div>
                         </template>
                         <template #empty-action="{ query }">
@@ -185,7 +176,11 @@
                             placeholder="Masukkan kata kunci"
                             @keydown.enter.prevent="verifyAndGenerate"
                         />
-                        <button type="button" class="absolute end-4 top-1/2 -translate-y-1/2 text-white-dark hover:text-primary" @click="showPassword = !showPassword">
+                        <button
+                            type="button"
+                            class="absolute end-4 top-1/2 -translate-y-1/2 text-white-dark hover:text-primary"
+                            @click="showPassword = !showPassword"
+                        >
                             <icon-eye class="h-5 w-5" />
                         </button>
                     </div>
@@ -214,9 +209,9 @@
                     <div class="grid gap-3 sm:grid-cols-3">
                         <button type="button" class="btn btn-primary gap-2" @click="copyNumber">
                             <icon-copy class="h-4.5 w-4.5" />
-                            Copy
+                            Salin Nomor
                         </button>
-                        <button type="button" class="btn btn-outline-primary" @click="generateAgain">Generate Again</button>
+                        <button type="button" class="btn btn-outline-primary" @click="generateAgain">Ambil Nomor Surat Lagi</button>
                         <button type="button" class="btn btn-outline-dark" @click="showSuccess = false">Close</button>
                     </div>
                 </div>
@@ -226,15 +221,26 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, nextTick, onMounted, reactive, ref } from 'vue';
-    import type { KlasifikasiSurat, Pegawai } from '@/composables/useSipenaMock';
+    import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
+    import type { KlasifikasiSurat, Pegawai } from '@/composables/useSipena';
 
     useHead({ title: 'Pengambilan Nomor Surat' });
 
-    const { pegawai, klasifikasi, isLoading, toast, clearToast, validateNip, createNomor } = useSipenaMock();
+    const {
+        klasifikasi,
+        isLoading,
+        toast,
+        clearToast,
+        fetchKlasifikasi,
+        validateNip,
+        findPegawaiByNip,
+        verifyKodeUnik,
+        createNomor,
+    } = useSipena();
 
     const bootLoading = ref(true);
     const touchNip = ref(false);
+    const nipChecking = ref(false);
     const showVerification = ref(false);
     const showSuccess = ref(false);
     const showPassword = ref(false);
@@ -247,7 +253,7 @@
 
     const form = reactive<{
         nipPengambil: string;
-        konseptor: Pegawai | string | null;
+        konseptor: Pegawai | null;
         hal: string;
         klasifikasi: KlasifikasiSurat | null;
     }>({
@@ -257,16 +263,46 @@
         klasifikasi: null,
     });
 
-    onMounted(() => {
-        setTimeout(() => {
-            bootLoading.value = false;
-            nextTick(() => nipInput.value?.focus());
-        }, 500);
+    onMounted(async () => {
+        await fetchKlasifikasi();
+        bootLoading.value = false;
+        nextTick(() => nipInput.value?.focus());
     });
 
     const isNipValid = computed(() => validateNip(form.nipPengambil));
     const selectedClassification = computed(() => form.klasifikasi);
-    const canSubmit = computed(() => isNipValid.value && !!form.konseptor && !!form.hal.trim() && !!form.klasifikasi);
+
+    // token dipakai buat cegah race condition kalau user ngetik ulang NIP
+    // sebelum request lookup sebelumnya selesai
+    let nipLookupToken = 0;
+
+    // Otomatis mengisi Nama Konseptor begitu NIP Pengambil valid,
+    // dicek langsung ke tabel pegawai di Supabase
+    watch(
+        () => [form.nipPengambil, isNipValid.value] as const,
+        async ([nip, valid]) => {
+            if (!valid) {
+                form.konseptor = null;
+                return;
+            }
+
+            const token = ++nipLookupToken;
+            nipChecking.value = true;
+
+            const result = await findPegawaiByNip(nip as string);
+
+            if (token !== nipLookupToken) return; // hasil basi, diabaikan
+
+            form.konseptor = result;
+            nipChecking.value = false;
+        },
+    );
+
+    const konseptorName = computed(() => form.konseptor?.nama ?? '');
+
+    const canSubmit = computed(
+        () => isNipValid.value && !!form.konseptor && !!form.hal.trim() && !!form.klasifikasi && !nipChecking.value,
+    );
 
     const nipStateClass = computed(() => {
         if (!touchNip.value) return '';
@@ -300,24 +336,35 @@
         passwordInput.value?.focus();
     };
 
-    const getKonseptorName = () => {
-        if (!form.konseptor) return '';
-        return typeof form.konseptor === 'string' ? form.konseptor : form.konseptor.nama;
-    };
-
     const verifyAndGenerate = async () => {
-        if (internalKeyword.value.trim().toLowerCase() !== 'sipena') {
-            verifyError.value = 'Kata kunci belum sesuai. Gunakan "sipena" untuk mock UI.';
+        if (!internalKeyword.value.trim()) {
+            verifyError.value = 'Kata kunci wajib diisi.';
             return;
         }
 
-        generatedNumber.value = await createNomor({
-            nipPengambil: form.nipPengambil,
-            namaKonseptor: getKonseptorName(),
+        // Verifikasi kata kunci dulu ke server -- kalau salah, STOP di sini,
+        // nomor surat tidak akan pernah di-generate
+        const isValidKeyword = await verifyKodeUnik(internalKeyword.value.trim());
+
+        if (!isValidKeyword) {
+            verifyError.value = 'Kata kunci tidak sesuai.';
+            return;
+        }
+
+        if (!form.konseptor || !form.klasifikasi) return;
+
+        const nomor = await createNomor({
+            pegawaiId: form.konseptor.id,
             hal: form.hal,
-            klasifikasi: form.klasifikasi as KlasifikasiSurat,
+            klasifikasi: form.klasifikasi,
         });
 
+        if (!nomor) {
+            verifyError.value = 'Gagal membuat nomor surat, silakan coba lagi.';
+            return;
+        }
+
+        generatedNumber.value = nomor;
         showVerification.value = false;
         showSuccess.value = true;
         internalKeyword.value = '';
@@ -329,7 +376,7 @@
         form.hal = '';
         form.klasifikasi = null;
         touchNip.value = false;
-        nextTick(() => nipInput.value?.focus()); 
+        nextTick(() => nipInput.value?.focus());
     };
 
     const generateAgain = () => {
@@ -348,11 +395,22 @@
     .sipena-modal-enter-active,
     .sipena-modal-leave-active,
     .sipena-toast-enter-active,
-    .sipena-toast-leave-active { transition: all 180ms ease; }
+    .sipena-toast-leave-active {
+        transition: all 180ms ease;
+    }
     .sipena-soft-enter-from,
-    .sipena-soft-leave-to { opacity: 0; transform: translateY(-6px); }
+    .sipena-soft-leave-to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
     .sipena-modal-enter-from,
-    .sipena-modal-leave-to { opacity: 0; transform: scale(0.98); }
+    .sipena-modal-leave-to {
+        opacity: 0;
+        transform: scale(0.98);
+    }
     .sipena-toast-enter-from,
-    .sipena-toast-leave-to { opacity: 0; transform: translateY(-8px); }
+    .sipena-toast-leave-to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
 </style>

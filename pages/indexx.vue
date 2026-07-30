@@ -1,18 +1,18 @@
 <template>
     <div class="min-h-screen bg-[#f7f8fb] text-black dark:bg-[#060818] dark:text-white-light">
-        <header class="sticky top-0 z-30 border-b border-white-light/70 bg-white/90 backdrop-blur dark:border-[#1b2e4b] dark:bg-[#0e1726]/90">
+        <!-- <header class="sticky top-0 z-30 border-b border-white-light/70 bg-white/90 backdrop-blur dark:border-[#1b2e4b] dark:bg-[#0e1726]/90">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                 <NuxtLink to="/" class="flex items-center gap-3">
-                    <img src="/assets/images/logo.png" alt="Logo SIPENA" class="h-14 object-contain" />
+                    <img src="/public/assets/images/logo.png" alt="Logo DJIM" class="h-10 rounded-md border-white-light object-cover" />
                 </NuxtLink>
                 <nav class="hidden items-center gap-8 font-semibold text-white-dark md:flex">
                     <a href="#fitur" class="hover:text-primary">Fitur</a>
                     <a href="#alur" class="hover:text-primary">Alur</a>
                     <a href="#faq" class="hover:text-primary">FAQ</a>
                 </nav>
-                <!-- <NuxtLink to="/auth/cover-login" class="btn btn-outline-primary btn-sm">Login Admin</NuxtLink> -->
+                <NuxtLink to="/auth/cover-login" class="btn btn-outline-primary btn-sm">Login Admin</NuxtLink>
             </div>
-        </header>
+        </header> -->
 
         <main>
             <section class="relative overflow-hidden bg-white dark:bg-[#0e1726]">
@@ -25,7 +25,10 @@
                             <icon-circle-check :fill="true" class="h-4 w-4" />
                             Sistem layanan nomor naskah internal
                         </div>
-                        <img src="/assets/images/logo.png" alt="Logo SIPENA" class="h-28 w-auto md:h-36" />
+                        <h1 class="text-5xl font-extrabold leading-tight text-black dark:text-white-light md:text-6xl">
+                            SIPENA
+                            <span class="block text-2xl font-bold text-primary md:text-3xl">Sistem Pengambilan Nomor Naskah</span>
+                        </h1>
                         <p class="mt-6 max-w-2xl text-lg leading-8 text-white-dark">
                             Platform modern untuk membantu pegawai mengambil nomor naskah secara cepat, tertib, dan terdokumentasi dengan klasifikasi arsip yang
                             konsisten.
@@ -43,56 +46,36 @@
                     </div>
 
                     <div class="relative">
-                        <div class="panel flex items-center justify-center overflow-hidden p-8 shadow-3xl">
-                            <svg width="100%" viewBox="0 0 680 480" role="img" class="max-h-[420px] w-full">
-                                <title>Ilustrasi arsip digital SIPENA</title>
-                                <desc>Ilustrasi lemari arsip dengan folder dan dokumen bercap centang</desc>
-                                <rect x="60" y="60" width="560" height="360" rx="16" fill="#eef2ff" class="dark:fill-[#1b2e4b]" />
-                                <rect x="150" y="120" width="380" height="260" rx="10" fill="#c7d2fe" />
-                                <rect x="170" y="140" width="340" height="60" rx="6" fill="#ffffff" />
-                                <rect x="170" y="212" width="340" height="60" rx="6" fill="#ffffff" />
-                                <rect x="170" y="284" width="340" height="60" rx="6" fill="#ffffff" />
-                                <rect x="190" y="158" width="120" height="10" rx="5" fill="#a5b4fc" />
-                                <rect x="190" y="176" width="80" height="8" rx="4" fill="#c7d2fe" />
-                                <rect x="190" y="230" width="120" height="10" rx="5" fill="#a5b4fc" />
-                                <rect x="190" y="248" width="90" height="8" rx="4" fill="#c7d2fe" />
-                                <rect x="190" y="302" width="120" height="10" rx="5" fill="#a5b4fc" />
-                                <rect x="190" y="320" width="70" height="8" rx="4" fill="#c7d2fe" />
-                                <circle cx="466" cy="170" r="18" fill="#4338ca" />
-                                <path
-                                    d="M458 170L464 176L475 163"
-                                    fill="none"
-                                    stroke="#ffffff"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-                                <circle cx="466" cy="242" r="18" fill="#4338ca" />
-                                <path
-                                    d="M458 242L464 248L475 235"
-                                    fill="none"
-                                    stroke="#ffffff"
-                                    stroke-width="3"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                />
-                                <circle cx="466" cy="314" r="18" fill="#facc15" />
-                                <circle cx="466" cy="314" r="5" fill="#ffffff" />
-                                <g>
-                                    <rect x="230" y="60" width="130" height="90" rx="8" fill="#4338ca" transform="rotate(-8 295 105)" />
-                                    <path
-                                        d="M270 105L285 120L320 85"
-                                        fill="none"
-                                        stroke="#ffffff"
-                                        stroke-width="6"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        transform="rotate(-8 295 105)"
-                                    />
-                                </g>
-                                <rect x="120" y="380" width="440" height="14" rx="7" fill="#a5b4fc" />
-                                <rect x="150" y="400" width="380" height="10" rx="5" fill="#c7d2fe" />
-                            </svg>
+                        <div class="panel overflow-hidden p-0 shadow-3xl">
+                            <div class="border-b border-white-light bg-gradient-to-r from-primary to-info p-6 text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="text-sm opacity-80">Nomor Naskah Terakhir</div>
+                                        <div class="mt-1 text-3xl font-extrabold">PR.01.01.6</div>
+                                    </div>
+                                    <div class="grid h-16 w-16 place-content-center rounded-xl bg-white/20">
+                                        <icon-notes class="h-9 w-9" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4 p-6">
+                                <div
+                                    v-for="item in previewRows"
+                                    :key="item.label"
+                                    class="flex items-center justify-between rounded-md bg-white-light/40 p-4 dark:bg-[#1b2e4b]"
+                                >
+                                    <div class="flex items-center gap-3">
+                                        <span class="grid h-10 w-10 place-content-center rounded-md bg-primary-light text-primary">
+                                            <component :is="item.icon" class="h-5 w-5" />
+                                        </span>
+                                        <div>
+                                            <div class="font-semibold">{{ item.label }}</div>
+                                            <div class="text-xs text-white-dark">{{ item.caption }}</div>
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-outline-success">{{ item.status }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -175,6 +158,10 @@
 
     useHead({ title: 'SIPENA' });
 
+    definePageMeta({
+        layout: 'employee-layout',
+    });
+
     const activeFaq = ref<number | null>(0);
 
     const previewRows = [
@@ -184,23 +171,15 @@
     ];
 
     const features = [
-        {
-            title: 'Pengambilan Nomor Otomatis',
-            text: 'Nomor dibuat berdasarkan kode klasifikasi surat dari urutan terakhir pengambilan.',
-            icon: resolveComponent('icon-bolt'),
-        },
-        { title: 'Validasi Pegawai', text: 'NIP konseptor memiliki status validasi sebelum proses lanjut.', icon: resolveComponent('icon-user-plus') },
-        {
-            title: 'Klasifikasi Kode Surat',
-            text: 'Pencarian kode klasifikasi surat lebih cepat hanya memasukkan kode klasifikasi surat atau nama klasifikasi kode surat.',
-            icon: resolveComponent('icon-folder'),
-        },
-        { title: 'Riwayat Pengambilan', text: 'Aktivitas riwayat akan tersimpan.', icon: resolveComponent('icon-clock') },
-        { title: 'Cepat & Aman', text: 'Interaksi ringan dengan verifikasi langsung dari sistem.', icon: resolveComponent('icon-lock-dots') },
+        { title: 'Pengambilan Nomor Otomatis', text: 'Nomor dibuat berdasarkan klasifikasi dan urutan terakhir.', icon: resolveComponent('icon-bolt') },
+        { title: 'Validasi Pegawai', text: 'NIP memiliki status validasi visual sebelum proses lanjut.', icon: resolveComponent('icon-user-plus') },
+        { title: 'Klasifikasi Arsip', text: 'Pencarian kode arsip lebih cepat dengan combobox.', icon: resolveComponent('icon-folder') },
+        { title: 'Riwayat Pengambilan', text: 'Aktivitas mock tersimpan untuk kebutuhan UI.', icon: resolveComponent('icon-clock') },
+        { title: 'Cepat & Aman', text: 'Interaksi ringan dengan verifikasi internal.', icon: resolveComponent('icon-lock-dots') },
     ];
 
     const steps = [
-        { title: 'Isi Data', text: 'Masukkan NIP, hal surat dan pilih kode klasifikasi surat.' },
+        { title: 'Isi Data', text: 'Masukkan NIP, konseptor, dan hal surat.' },
         { title: 'Pilih Klasifikasi', text: 'Cari kode berdasarkan kode, nama, atau deskripsi.' },
         { title: 'Verifikasi', text: 'Masukkan kata kunci internal.' },
         { title: 'Nomor Surat Terbit', text: 'Nomor dapat disalin atau dibuat ulang.' },
@@ -209,13 +188,10 @@
     const faqs = [
         {
             question: 'Apakah pegawai harus login?',
-            answer: 'Tidak. Halaman pengambilan nomor dibuat untuk pegawai internal pada Kantor Wilayah Direktorat Jenderal Imigrasi Riau.',
+            answer: 'Tidak. Halaman pengambilan nomor dibuat publik untuk pegawai, sedangkan dashboard admin tetap dipisahkan.',
         },
-        { question: 'Apakah sistem ini sudah terintegrasi dengan database sistem?', answer: 'Sudah. Sistem ini sudah terintegrasi dengan database sistem.' },
-        {
-            question: 'Bagaimana nomor surat dibuat?',
-            answer: 'Nomor dibuat dari kode klasifikasi surat yang dipilih oleh pegawai sebelumnya dan akan mengambil dengan nomor urut terbaru dari terakhir pengambilan kode klasifikasi surat.',
-        },
+        { question: 'Apakah ini sudah terhubung database?', answer: 'Belum. Implementasi ini khusus UI dan memakai mock data sesuai scope pekerjaan.' },
+        { question: 'Bagaimana nomor surat dibuat?', answer: 'Nomor dibuat dari kode klasifikasi dan urutan mock agar flow UI dapat diuji end-to-end.' },
     ];
 </script>
 
