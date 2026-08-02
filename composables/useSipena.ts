@@ -88,7 +88,8 @@ export const useSipena = () => {
     };
 
     // Generate nomor surat lewat RPC ambil_nomor_surat (atomik, aman race condition)
-    const createNomor = async (payload: CreateNomorPayload): Promise<string | null> => {
+
+    const createNomor = async (payload: CreateNomorPayload): Promise<{ nomor: string; tanggalSurat: string } | null> => {
         isLoading.value = true;
         try {
             const { data, error } = await supabase
@@ -104,8 +105,9 @@ export const useSipena = () => {
                 return null;
             }
 
+            const result = data as { out_nomor_lengkap: string; out_tanggal_surat: string } | null;
             showToast('success', 'Nomor surat berhasil dibuat.');
-            return (data as { out_nomor_lengkap: string } | null)?.out_nomor_lengkap ?? null;
+            return result ? { nomor: result.out_nomor_lengkap, tanggalSurat: result.out_tanggal_surat } : null;
         } finally {
             isLoading.value = false;
         }

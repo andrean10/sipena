@@ -206,6 +206,9 @@
                     <div class="my-6 rounded-md bg-primary-light px-5 py-4 text-4xl font-extrabold text-primary dark:bg-primary-dark-light">
                         {{ generatedNumber }}
                     </div>
+                    <p v-if="isWeekendSubmission" class="mb-4 text-sm text-white-dark">
+                        Diambil di akhir pekan — tanggal surat otomatis disesuaikan ke <span class="font-semibold">{{ tanggalSuratDisplay }}</span>
+                    </p>
                     <div class="grid gap-3 sm:grid-cols-3">
                         <button type="button" class="btn btn-primary gap-2" @click="copyNumber">
                             <icon-copy class="h-4.5 w-4.5" />
@@ -220,7 +223,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<!-- <script setup lang="ts">
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
     import type { KlasifikasiSurat, Pegawai } from '@/composables/useSipena';
 
@@ -365,6 +368,182 @@
         }
 
         generatedNumber.value = nomor;
+        showVerification.value = false;
+        showSuccess.value = true;
+        internalKeyword.value = '';
+    };
+
+    const resetForm = () => {
+        form.nipPengambil = '';
+        form.konseptor = null;
+        form.hal = '';
+        form.klasifikasi = null;
+        touchNip.value = false;
+        nextTick(() => nipInput.value?.focus());
+    };
+
+    const generateAgain = () => {
+        showSuccess.value = false;
+        resetForm();
+    };
+
+    const copyNumber = async () => {
+        await navigator.clipboard?.writeText(generatedNumber.value);
+    };
+</script> -->
+
+<script setup lang="ts">
+    import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
+    import type { KlasifikasiSurat, Pegawai } from '@/composables/useSipena';
+
+    useHead({ title: 'Pengambilan Nomor Surat' });
+
+    const { klasifikasi, isLoading, toast, clearToast, fetchKlasifikasi, validateNip, findPegawaiByNip, verifyKodeUnik, createNomor } = useSipena();
+
+    const bootLoading = ref(true);
+    const touchNip = ref(false);
+    const nipChecking = ref(false);
+    const showVerification = ref(false);
+    const showSuccess = ref(false);
+    const showPassword = ref(false);
+    const internalKeyword = ref('');
+    const verifyError = ref('');
+    const generatedNumber = ref('');
+    const tanggalSuratDisplay = ref('');
+    const isWeekendSubmission = ref(false);
+    const nipInput = ref<HTMLInputElement | null>(null);
+    const halInput = ref<HTMLTextAreaElement | null>(null);
+    const passwordInput = ref<HTMLInputElement | null>(null);
+
+    const form = reactive<{
+        nipPengambil: string;
+        konseptor: Pegawai | null;
+        hal: string;
+        klasifikasi: KlasifikasiSurat | null;
+    }>({
+        nipPengambil: '',
+        konseptor: null,
+        hal: '',
+        klasifikasi: null,
+    });
+
+    onMounted(async () => {
+        await fetchKlasifikasi();
+        bootLoading.value = false;
+        nextTick(() => nipInput.value?.focus());
+    });
+
+    const isNipValid = computed(() => validateNip(form.nipPengambil));
+    const selectedClassification = computed(() => form.klasifikasi);
+
+    // token dipakai buat cegah race condition kalau user ngetik ulang NIP
+    // sebelum request lookup sebelumnya selesai
+    let nipLookupToken = 0;
+
+    // Otomatis mengisi Nama Konseptor begitu NIP Pengambil valid,
+    // dicek langsung ke tabel pegawai di Supabase
+    watch(
+        () => [form.nipPengambil, isNipValid.value] as const,
+        async ([nip, valid]) => {
+            if (!valid) {
+                form.konseptor = null;
+                return;
+            }
+
+            const token = ++nipLookupToken;
+            nipChecking.value = true;
+
+            const result = await findPegawaiByNip(nip as string);
+
+            if (token !== nipLookupToken) return; // hasil basi, diabaikan
+
+            form.konseptor = result;
+            nipChecking.value = false;
+        },
+    );
+
+    const konseptorName = computed(() => form.konseptor?.nama ?? '');
+
+    const canSubmit = computed(() => isNipValid.value && !!form.konseptor && !!form.hal.trim() && !!form.klasifikasi && !nipChecking.value);
+
+    const nipStateClass = computed(() => {
+        if (!touchNip.value) return '';
+        return isNipValid.value ? 'border-success focus:border-success' : 'border-danger focus:border-danger';
+    });
+
+    const toastClass = computed(() => ({
+        'border-success/30': toast.value?.type === 'success',
+        'border-danger/30': toast.value?.type === 'error',
+        'border-info/30': toast.value?.type === 'info',
+    }));
+
+    const toastTitle = computed(() => {
+        if (toast.value?.type === 'success') return 'Berhasil';
+        if (toast.value?.type === 'error') return 'Gagal';
+        return 'Informasi';
+    });
+
+    const autoResize = () => {
+        if (!halInput.value) return;
+        halInput.value.style.height = 'auto';
+        halInput.value.style.height = `${halInput.value.scrollHeight}px`;
+    };
+
+    const formatTanggalSurat = (tanggal: string) => {
+        return new Date(tanggal).toLocaleDateString('id-ID', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        });
+    };
+
+    const openVerification = async () => {
+        touchNip.value = true;
+        if (!canSubmit.value) return;
+        showVerification.value = true;
+        verifyError.value = '';
+        await nextTick();
+        passwordInput.value?.focus();
+    };
+
+    const verifyAndGenerate = async () => {
+        if (!internalKeyword.value.trim()) {
+            verifyError.value = 'Kata kunci wajib diisi.';
+            return;
+        }
+
+        // Verifikasi kata kunci dulu ke server -- kalau salah, STOP di sini,
+        // nomor surat tidak akan pernah di-generate
+        const isValidKeyword = await verifyKodeUnik(internalKeyword.value.trim());
+
+        if (!isValidKeyword) {
+            verifyError.value = 'Kata kunci tidak sesuai.';
+            return;
+        }
+
+        if (!form.konseptor || !form.klasifikasi) return;
+
+        // createNomor sekarang return object { nomor, tanggalSurat }, bukan string
+        const result = await createNomor({
+            pegawaiId: form.konseptor.id,
+            hal: form.hal,
+            klasifikasi: form.klasifikasi,
+        });
+
+        if (!result) {
+            verifyError.value = 'Gagal membuat nomor surat, silakan coba lagi.';
+            return;
+        }
+
+        generatedNumber.value = result.nomor;
+        tanggalSuratDisplay.value = formatTanggalSurat(result.tanggalSurat);
+
+        // deteksi apakah hari submit sekarang jatuh di Sabtu(6)/Minggu(0),
+        // buat nampilin notice "tanggal digeser" di dialog sukses
+        const hariIni = new Date().getDay();
+        isWeekendSubmission.value = hariIni === 0 || hariIni === 6;
+
         showVerification.value = false;
         showSuccess.value = true;
         internalKeyword.value = '';
