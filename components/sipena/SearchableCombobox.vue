@@ -52,7 +52,9 @@
                         role="option"
                         @mousedown.prevent="selectItem(item)"
                     >
-                        <div class="grid h-9 w-9 shrink-0 place-content-center rounded-md bg-primary-light text-primary dark:bg-primary dark:text-primary-light">
+                        <div
+                            class="grid h-9 w-9 shrink-0 place-content-center rounded-md bg-primary-light text-primary dark:bg-primary dark:text-primary-light"
+                        >
                             <slot name="icon" :item="item">
                                 <icon-file class="h-4.5 w-4.5" />
                             </slot>
@@ -72,9 +74,6 @@
                     </div>
                     <h5 class="mb-1 text-base font-semibold dark:text-white-light">Tidak ada data ditemukan</h5>
                     <p class="text-xs text-white-dark">Coba gunakan kata kunci lain.</p>
-                    <button type="button" class="btn btn-outline-primary btn-sm mt-4" @click="$emit('empty-action', query)">
-                        Tambah Kata Kunci Pencarian
-                    </button>
                 </div>
             </div>
         </transition>
@@ -111,8 +110,8 @@
 
     const getValue = (item: any, key: string) => item?.[key] || '';
     const getKey = (item: any) => getValue(item, props.itemKey) || getTitle(item);
-    const getTitle = (item: any) => typeof item === 'string' ? item : getValue(item, props.titleKey);
-    const getSubtitle = (item: any) => props.subtitleKey ? getValue(item, props.subtitleKey) : '';
+    const getTitle = (item: any) => (typeof item === 'string' ? item : getValue(item, props.titleKey));
+    const getSubtitle = (item: any) => (props.subtitleKey ? getValue(item, props.subtitleKey) : '');
 
     const filteredItems = computed(() => {
         const keyword = query.value.toLowerCase().trim();
@@ -128,7 +127,7 @@
             if (!value) query.value = '';
             else query.value = typeof value === 'string' ? value : getTitle(value);
         },
-        { immediate: true }
+        { immediate: true },
     );
 
     const open = () => {
@@ -174,7 +173,12 @@
 
 <style scoped>
     .sipena-dropdown-enter-active,
-    .sipena-dropdown-leave-active { transition: all 160ms ease; }
+    .sipena-dropdown-leave-active {
+        transition: all 160ms ease;
+    }
     .sipena-dropdown-enter-from,
-    .sipena-dropdown-leave-to { opacity: 0; transform: translateY(-6px) scale(0.98); }
+    .sipena-dropdown-leave-to {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+    }
 </style>

@@ -17,7 +17,7 @@
                         <icon-menu class="h-5 w-5" />
                     </a>
                 </div>
-                <div class="hidden ltr:mr-2 rtl:ml-2 sm:block">
+                <!-- <div class="hidden ltr:mr-2 rtl:ml-2 sm:block">
                     <ul class="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
                         <li>
                             <NuxtLink
@@ -44,12 +44,12 @@
                             </NuxtLink>
                         </li>
                     </ul>
-                </div>
+                </div> -->
                 <div
                     class="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2"
                 >
                     <div class="sm:ltr:mr-auto sm:rtl:ml-auto">
-                        <form
+                        <!-- <form
                             class="absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0"
                             :class="{ '!block': search }"
                             @submit.prevent="search = false"
@@ -71,15 +71,15 @@
                                     <icon-x-circle />
                                 </button>
                             </div>
-                        </form>
+                        </form> -->
 
-                        <button
+                        <!-- <button
                             type="button"
                             class="search_btn rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 dark:bg-dark/40 dark:hover:bg-dark/60 sm:hidden"
                             @click="search = !search"
                         >
                             <icon-search class="mx-auto h-4.5 w-4.5 dark:text-[#d0d2d6]" />
-                        </button>
+                        </button> -->
                     </div>
                     <div>
                         <a
@@ -108,7 +108,7 @@
                         </a>
                     </div>
 
-                    <div class="dropdown shrink-0">
+                    <!-- <div class="dropdown shrink-0">
                         <client-only>
                             <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-end' : 'bottom-start'" offsetDistance="8">
                                 <button
@@ -143,9 +143,9 @@
                                 </template>
                             </Popper>
                         </client-only>
-                    </div>
+                    </div> -->
 
-                    <div class="dropdown shrink-0">
+                    <!-- <div class="dropdown shrink-0">
                         <client-only>
                             <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-start' : 'bottom-end'" offsetDistance="8">
                                 <button
@@ -208,9 +208,9 @@
                                 </template>
                             </Popper>
                         </client-only>
-                    </div>
+                    </div> -->
 
-                    <div class="dropdown shrink-0">
+                    <!-- <div class="dropdown shrink-0">
                         <client-only>
                             <Popper :placement="store.rtlClass === 'rtl' ? 'bottom-end' : 'bottom-start'" offsetDistance="8">
                                 <button
@@ -286,7 +286,7 @@
                                 </template>
                             </Popper>
                         </client-only>
-                    </div>
+                    </div> -->
 
                     <div class="dropdown shrink-0">
                         <client-only>
