@@ -195,7 +195,7 @@
                 </div>
             </div>
         </transition>
-yyh              
+
         <transition name="sipena-modal">
             <div v-if="showSuccess" class="fixed inset-0 z-50 grid place-content-center bg-black/60 px-4">
                 <div class="panel w-full max-w-md text-center" role="dialog" aria-modal="true">
