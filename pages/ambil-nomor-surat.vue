@@ -20,12 +20,13 @@
         </transition>
 
         <div class="mx-auto max-w-5xl">
+            <!-- header -->
             <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <NuxtLink to="/" class="inline-flex items-center gap-2 font-semibold text-primary hover:underline">
                     <icon-arrow-left class="h-4.5 w-4.5" />
                     Kembali ke Beranda
                 </NuxtLink>
-                <span class="badge badge-outline-primary w-max">Layanan Publik Internal</span>
+                <span class="badge badge-outline-primary w-max">Layanan Internal</span>
             </div>
 
             <div class="mb-8 text-center">
@@ -64,8 +65,8 @@
                             </span>
                         </div>
                         <p v-if="!touchNip" class="mt-1.5 text-xs text-white-dark">NIP digunakan untuk validasi pengambil nomor.</p>
-                        <p v-else-if="isNipValid" class="mt-1.5 text-xs font-semibold text-success">NIP valid dan siap diverifikasi.</p>
-                        <p v-else class="mt-1.5 text-xs font-semibold text-danger">NIP harus berisi tepat 18 digit angka.</p>
+                        <p v-else-if="isNipValid" class="mt-1.5 text-xs font-semibold text-success">NIP valid</p>
+                        <p v-else class="mt-1.5 text-xs font-semibold text-danger">NIP harus berisi tepat 18 digit angka</p>
                     </div>
 
                     <div>
@@ -222,175 +223,6 @@
         </transition>
     </div>
 </template>
-
-<!-- <script setup lang="ts">
-    import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';
-    import type { KlasifikasiSurat, Pegawai } from '@/composables/useSipena';
-
-    useHead({ title: 'Pengambilan Nomor Surat' });
-
-    const {
-        klasifikasi,
-        isLoading,
-        toast,
-        clearToast,
-        fetchKlasifikasi,
-        validateNip,
-        findPegawaiByNip,
-        verifyKodeUnik,
-        createNomor,
-    } = useSipena();
-
-    const bootLoading = ref(true);
-    const touchNip = ref(false);
-    const nipChecking = ref(false);
-    const showVerification = ref(false);
-    const showSuccess = ref(false);
-    const showPassword = ref(false);
-    const internalKeyword = ref('');
-    const verifyError = ref('');
-    const generatedNumber = ref('');
-    const nipInput = ref<HTMLInputElement | null>(null);
-    const halInput = ref<HTMLTextAreaElement | null>(null);
-    const passwordInput = ref<HTMLInputElement | null>(null);
-
-    const form = reactive<{
-        nipPengambil: string;
-        konseptor: Pegawai | null;
-        hal: string;
-        klasifikasi: KlasifikasiSurat | null;
-    }>({
-        nipPengambil: '',
-        konseptor: null,
-        hal: '',
-        klasifikasi: null,
-    });
-
-    onMounted(async () => {
-        await fetchKlasifikasi();
-        bootLoading.value = false;
-        nextTick(() => nipInput.value?.focus());
-    });
-
-    const isNipValid = computed(() => validateNip(form.nipPengambil));
-    const selectedClassification = computed(() => form.klasifikasi);
-
-    // token dipakai buat cegah race condition kalau user ngetik ulang NIP
-    // sebelum request lookup sebelumnya selesai
-    let nipLookupToken = 0;
-
-    // Otomatis mengisi Nama Konseptor begitu NIP Pengambil valid,
-    // dicek langsung ke tabel pegawai di Supabase
-    watch(
-        () => [form.nipPengambil, isNipValid.value] as const,
-        async ([nip, valid]) => {
-            if (!valid) {
-                form.konseptor = null;
-                return;
-            }
-
-            const token = ++nipLookupToken;
-            nipChecking.value = true;
-
-            const result = await findPegawaiByNip(nip as string);
-
-            if (token !== nipLookupToken) return; // hasil basi, diabaikan
-
-            form.konseptor = result;
-            nipChecking.value = false;
-        },
-    );
-
-    const konseptorName = computed(() => form.konseptor?.nama ?? '');
-
-    const canSubmit = computed(
-        () => isNipValid.value && !!form.konseptor && !!form.hal.trim() && !!form.klasifikasi && !nipChecking.value,
-    );
-
-    const nipStateClass = computed(() => {
-        if (!touchNip.value) return '';
-        return isNipValid.value ? 'border-success focus:border-success' : 'border-danger focus:border-danger';
-    });
-
-    const toastClass = computed(() => ({
-        'border-success/30': toast.value?.type === 'success',
-        'border-danger/30': toast.value?.type === 'error',
-        'border-info/30': toast.value?.type === 'info',
-    }));
-
-    const toastTitle = computed(() => {
-        if (toast.value?.type === 'success') return 'Berhasil';
-        if (toast.value?.type === 'error') return 'Gagal';
-        return 'Informasi';
-    });
-
-    const autoResize = () => {
-        if (!halInput.value) return;
-        halInput.value.style.height = 'auto';
-        halInput.value.style.height = `${halInput.value.scrollHeight}px`;
-    };
-
-    const openVerification = async () => {
-        touchNip.value = true;
-        if (!canSubmit.value) return;
-        showVerification.value = true;
-        verifyError.value = '';
-        await nextTick();
-        passwordInput.value?.focus();
-    };
-
-    const verifyAndGenerate = async () => {
-        if (!internalKeyword.value.trim()) {
-            verifyError.value = 'Kata kunci wajib diisi.';
-            return;
-        }
-
-        // Verifikasi kata kunci dulu ke server -- kalau salah, STOP di sini,
-        // nomor surat tidak akan pernah di-generate
-        const isValidKeyword = await verifyKodeUnik(internalKeyword.value.trim());
-
-        if (!isValidKeyword) {
-            verifyError.value = 'Kata kunci tidak sesuai.';
-            return;
-        }
-
-        if (!form.konseptor || !form.klasifikasi) return;
-
-        const nomor = await createNomor({
-            pegawaiId: form.konseptor.id,
-            hal: form.hal,
-            klasifikasi: form.klasifikasi,
-        });
-
-        if (!nomor) {
-            verifyError.value = 'Gagal membuat nomor surat, silakan coba lagi.';
-            return;
-        }
-
-        generatedNumber.value = nomor;
-        showVerification.value = false;
-        showSuccess.value = true;
-        internalKeyword.value = '';
-    };
-
-    const resetForm = () => {
-        form.nipPengambil = '';
-        form.konseptor = null;
-        form.hal = '';
-        form.klasifikasi = null;
-        touchNip.value = false;
-        nextTick(() => nipInput.value?.focus());
-    };
-
-    const generateAgain = () => {
-        showSuccess.value = false;
-        resetForm();
-    };
-
-    const copyNumber = async () => {
-        await navigator.clipboard?.writeText(generatedNumber.value);
-    };
-</script> -->
 
 <script setup lang="ts">
     import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue';

@@ -20,10 +20,7 @@
                 </div>
 
                 <client-only>
-                    <perfect-scrollbar
-                        :options="{ swipeEasing: true, wheelPropagation: false }"
-                        class="relative h-[calc(100vh-150px)]"
-                    >
+                    <perfect-scrollbar :options="{ swipeEasing: true, wheelPropagation: false }" class="relative h-[calc(100vh-150px)]">
                         <ul class="relative space-y-0.5 p-4 py-0 font-semibold">
                             <h2 class="-mx-4 mb-1 flex items-center bg-white-light/30 px-7 py-3 font-extrabold uppercase dark:bg-dark dark:bg-opacity-[0.08]">
                                 <icon-minus class="hidden h-5 w-4 flex-none" />
@@ -81,10 +78,10 @@
     const showLogoutModal = ref(false);
 
     const menuItems = [
-        { label: 'Dashboard', to: '/dashboard', icon: resolveComponent('icon-menu-dashboard') },
-        { label: 'Riwayat Surat', to: '/riwayat-surat', icon: resolveComponent('icon-notes') },
-        { label: 'Kode Surat', to: '/kode-surat', icon: resolveComponent('icon-folder') },
-        { label: 'Pegawai', to: '/pegawai', icon: resolveComponent('icon-users') },
+        { label: 'Dashboard', to: '/admin/dashboard', icon: resolveComponent('icon-menu-dashboard') },
+        { label: 'Riwayat Surat', to: '/admin/riwayat-surat', icon: resolveComponent('icon-notes') },
+        { label: 'Kode Surat', to: '/admin/kode-surat', icon: resolveComponent('icon-folder') },
+        { label: 'Pegawai', to: '/admin/pegawai', icon: resolveComponent('icon-users') },
     ];
 
     const toggleMobileMenu = () => {

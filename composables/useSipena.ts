@@ -14,6 +14,16 @@ export interface KlasifikasiSurat {
     deskripsi?: string;
 }
 
+export interface RiwayatSurat {
+    id: number;
+    nomorLengkap: string;
+    hal: string;
+    tanggalSurat: string;
+    tanggalPengambilan: string;
+    kodeKlasifikasi: string;
+    namaKlasifikasi: string;
+}
+
 interface CreateNomorPayload {
     pegawaiId: number;
     hal: string;
@@ -113,6 +123,44 @@ export const useSipena = () => {
         }
     };
 
+    const fetchRiwayatSurat = async (
+        pegawaiId: number,
+        kodeUnik: string,
+        page: number,
+        pageSize = 10,
+    ): Promise<{ data: RiwayatSurat[]; total: number } | null> => {
+        isLoading.value = true;
+        try {
+            const { data, error } = await supabase.rpc('get_riwayat_surat', {
+                p_pegawai_id: pegawaiId,
+                p_kode_unik: kodeUnik,
+                p_page: page,
+                p_page_size: pageSize,
+            });
+
+            if (error) {
+                showToast('error', error.message || 'Gagal memuat riwayat surat.');
+                return null;
+            }
+
+            const rows = (data ?? []) as any[];
+            return {
+                data: rows.map((r) => ({
+                    id: r.id,
+                    nomorLengkap: r.nomor_lengkap,
+                    hal: r.hal,
+                    tanggalSurat: r.tanggal_surat,
+                    tanggalPengambilan: r.tanggal_pengambilan,
+                    kodeKlasifikasi: r.kode_klasifikasi,
+                    namaKlasifikasi: r.nama_klasifikasi,
+                })),
+                total: rows.length > 0 ? Number(rows[0].total_count) : 0,
+            };
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
     return {
         klasifikasi,
         isLoading,
@@ -123,5 +171,6 @@ export const useSipena = () => {
         findPegawaiByNip,
         verifyKodeUnik,
         createNomor,
+        fetchRiwayatSurat,
     };
 };
