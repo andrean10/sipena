@@ -3,7 +3,7 @@
         <nav class="sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300">
             <div class="flex h-full flex-col bg-white dark:bg-[#0e1726]">
                 <div class="flex items-center justify-between px-4 py-3">
-                    <NuxtLink to="/dashboard" class="main-logo flex shrink-0 items-center gap-3">
+                    <NuxtLink to="/admin/dashboard" class="main-logo flex shrink-0 items-center gap-3">
                         <img class="h-10 w-10 rounded-md object-contain" src="/favicon.png" alt="SIPENA" />
                         <span>
                             <span class="block text-lg font-extrabold text-primary">SIPENA</span>

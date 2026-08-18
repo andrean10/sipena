@@ -8,7 +8,7 @@
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <ul class="mb-2 flex space-x-2 rtl:space-x-reverse">
-                    <li><NuxtLink to="/dashboard" class="text-primary hover:underline">Dashboard</NuxtLink></li>
+                    <li><NuxtLink to="/admin/dashboard" class="text-primary hover:underline">Dashboard</NuxtLink></li>
                     <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2"><span>Kode Surat</span></li>
                 </ul>
                 <h1 class="text-2xl font-extrabold text-black dark:text-white-light">Kode Surat</h1>

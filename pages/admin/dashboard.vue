@@ -33,7 +33,7 @@
             <div class="panel xl:col-span-2">
                 <div class="mb-5 flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-black dark:text-white-light">Riwayat Surat Terbaru</h2>
-                    <NuxtLink to="/riwayat-surat" class="btn btn-outline-primary btn-sm">Kelola Riwayat</NuxtLink>
+                    <NuxtLink to="/admin/riwayat-surat" class="btn btn-outline-primary btn-sm">Kelola Riwayat</NuxtLink>
                 </div>
                 <div class="table-responsive">
                     <table>
@@ -74,7 +74,7 @@
                     <div class="rounded-md border border-white-light p-4 dark:border-[#1b2e4b]">
                         <div class="text-xs uppercase text-white-dark">Aksi Cepat</div>
                         <div class="mt-3 grid gap-2">
-                            <NuxtLink to="/pegawai" class="btn btn-outline-primary btn-sm gap-2">
+                            <NuxtLink to="/admin/pegawai" class="btn btn-outline-primary btn-sm gap-2">
                                 <icon-users class="h-4.5 w-4.5" />
                                 Kelola Pegawai
                             </NuxtLink>

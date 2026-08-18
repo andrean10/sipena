@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div v-if="toast" class="fixed right-5 top-5 z-[70] w-[calc(100%-40px)] max-w-sm rounded-md border bg-white p-4 shadow-lg dark:bg-[#0e1726]" :class="toastClass">
+        <div
+            v-if="toast"
+            class="fixed right-5 top-5 z-[70] w-[calc(100%-40px)] max-w-sm rounded-md border bg-white p-4 shadow-lg dark:bg-[#0e1726]"
+            :class="toastClass"
+        >
             <div class="font-semibold">{{ toast.type === 'success' ? 'Berhasil' : 'Informasi' }}</div>
             <div class="text-sm text-white-dark">{{ toast.message }}</div>
         </div>
@@ -8,7 +12,7 @@
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <ul class="mb-2 flex space-x-2 rtl:space-x-reverse">
-                    <li><NuxtLink to="/dashboard" class="text-primary hover:underline">Dashboard</NuxtLink></li>
+                    <li><NuxtLink to="/admin/dashboard" class="text-primary hover:underline">Dashboard</NuxtLink></li>
                     <li class="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2"><span>Pegawai</span></li>
                 </ul>
                 <h1 class="text-2xl font-extrabold text-black dark:text-white-light">Pegawai</h1>
