@@ -62,7 +62,7 @@ export default defineNuxtConfig({
     },
 
     vite: {
-        optimizeDeps: { include: ['quill'] },
+        
         server: {
             allowedHosts: ['.ngrok-free.dev'], // atau host lengkapnya
         },
