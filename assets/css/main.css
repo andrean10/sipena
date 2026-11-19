@@ -31,3 +31,13 @@
     --color-gold-900: #5d371d;
     --color-gold-950: #351c0d;
 }
+
+/* Pakai navy pekat logo sebagai warna utama di light mode, dan versi terang di dark mode */
+:root {
+    --ui-primary: var(--color-navy-900);
+    --ui-secondary: var(--color-gold-600);
+}
+.dark {
+    --ui-primary: var(--color-navy-300);
+    --ui-secondary: var(--color-gold-400);
+}
